@@ -1,9 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 from django.views.generic import ListView, DetailView, CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import RestaurantsLocations
-from .forms import RestaurantCreateForm, RestaurantsLocationsCreateForm
+from .forms import RestaurantsLocationsCreateForm
 # Create your views(controllers) here.
 
 
@@ -25,7 +26,7 @@ def restaurant_createview(request):
 
 
 def restaurants_list(request):
-    template_name = "restaurants/restaurants_list.html"
+    template_name = "restaurants/restaurantslocations_list.html"
     queryset = RestaurantsLocations.objects.all()
     context = {
         "object_list": queryset
@@ -53,8 +54,15 @@ class RestaurantDetailView(DetailView):
     #     return  context
 
 
-class RestaurantCreateView(CreateView):
+class RestaurantCreateView(LoginRequiredMixin, CreateView):
     form_class = RestaurantsLocationsCreateForm
     template_name = "restaurants/form.html"
     success_url = '/restaurants/'
+
+    def form_valid(self, form):
+        instance = form.save(commit=False)
+        instance.owner = self.request.user
+
+        return super(RestaurantCreateView, self).form_valid(form)
+
 

@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'restaurants'
+    'restaurants',
+    'menus',
 ]
 
 MIDDLEWARE = [
@@ -53,6 +54,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'yourenv.urls'
+LOGIN_URL = '/login/'
 
 TEMPLATES = [
     {

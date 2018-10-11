@@ -1,12 +1,17 @@
+from django.conf import settings
 from django.db import models
 from django.db.models.signals import pre_save, post_save
+from django.core.urlresolvers import reverse
 
 from .utils import unique_slug_generator
 from .validators import validate_category
 
-
+User = settings.AUTH_USER_MODEL
 # Create your models here.
+
+
 class RestaurantsLocations(models.Model):
+    owner = models.ForeignKey(User)
     name = models.CharField(max_length=120)
     locations = models.CharField(max_length=120, null=True, blank=True)
     category = models.CharField(max_length=120, null=True, blank=True)
@@ -18,7 +23,10 @@ class RestaurantsLocations(models.Model):
         # for show name table in DB
         return self.name
 
-    @property #TODO спросить
+    def get_absolute_url(self):
+        return reverse("restaurants:detail", kwargs={'slug':self.slug})
+
+    @property
     def title(self):
         return self.name
 
