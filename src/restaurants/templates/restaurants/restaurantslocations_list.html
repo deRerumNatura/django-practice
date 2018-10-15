@@ -2,10 +2,12 @@
 
 {% block content %}
     <p>{{ object }}</p>
-    <h1>Restaurants</h1>
+    <h1>Restaurants <small><a href="{% url "restaurants:create" %}">Add</a></small></h1>
     <ul>
         {% for item in object_list %}
             <li><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></li>
+        {% empty %}
+            <li><a href="{% url "restaurants:create" %}">Add One</a></li>
         {% endfor %}
     </ul>
 {% endblock %}

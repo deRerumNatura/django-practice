@@ -8,4 +8,7 @@
         {{ form.as_p }}
         <button type="submit">Submit</button>
     </form>
+    {% if form.instance %}
+        {{ form.instance.name }}
+    {% endif %}
 {% endblock %}
