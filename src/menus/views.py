@@ -1,13 +1,24 @@
 from django.shortcuts import render
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, View
 
 from .models import Item
 from .forms import ItemForm
 from .utils import pb
 
+class HomeView(View):
+    def get(self, request, *args, **kwargs): # todo что прилетает в реквесте?
+        if not request.user.is_authenticated():
+            return render(request, "home.html", {})
 
-class ItemListView(ListView):
+        user = request.user
+        is_following_user_ids = [x.user.id for x in user.is_following.all()]
+        qs = Item.objects.filter(user__id__in=is_following_user_ids, public=True) # todo как работают параметры?
+
+        return render(request, "menus/home-feed.html", {"object_list": qs})
+
+
+class ItemListView(ListView, LoginRequiredMixin):
     def get_queryset(self):
         return Item.objects.filter(user=self.request.user)
 

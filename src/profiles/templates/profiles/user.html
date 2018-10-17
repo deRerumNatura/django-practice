@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+   <h2>{{ user.username }}</h2>
+    <p>{% include "profiles/snippets/follow_form.html" with username=user.username is_following=is_following %}</p>
+    <form action="." method="GET" class="form">
+        <input type="text" placeholder="Search..." name="q">
+        <button class="btn btn-default" type="submit" value="{{ request.GET.q }}">Search</button>
+    </form>
+    <ul>
+    {% if locations %}
+        {% for restaurant in locations %}
+            <li>{{ restaurant }}</li>
+            <ul>
+                {% for item in restaurant.item_set.all %}
+                    <li>{{ item }}
+                        <ul>
+                            {%for ing in item.get_contents %}
+                                {{ ing }}
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    {% else %}
+        <li>Restaurants not exist</li>
+    {% endif %}
+    </ul>
+{% endblock %}

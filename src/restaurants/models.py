@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.db.models.signals import pre_save, post_save
 from django.core.urlresolvers import reverse
 
@@ -10,6 +11,25 @@ User = settings.AUTH_USER_MODEL
 # Create your models here.
 
 
+class RestaurantsLocationsQuerySet(models.query.QuerySet):
+    def search(self, query):
+        return self.filter(
+            Q(name__icontains=query)|
+            Q(locations__icontains=query)|
+            Q(category__icontains=query)|
+            Q(item__name__icontains=query)|
+            Q(item__contents__icontains=query)
+        ).distinct()
+
+
+class RestaurantsLocationsManager(models.Manager):
+    def get_queryset(self):
+        return RestaurantsLocationsQuerySet(self.model, using=self._db)
+
+    def search(self, query):
+        return self.get_queryset().search(query)
+
+
 class RestaurantsLocations(models.Model):
     owner = models.ForeignKey(User)
     name = models.CharField(max_length=120)
@@ -18,6 +38,8 @@ class RestaurantsLocations(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     slug = models.SlugField(null=True, blank=True)
+
+    objects = RestaurantsLocationsManager()
 
     def __str__(self):
         # for show name table in DB

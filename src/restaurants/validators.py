@@ -9,7 +9,7 @@ def validate_even(value):
             params={'value': value},
         )
 
-CATEGORIES = ('Mexican', 'Asian', 'American')
+CATEGORIES = ('Mexican', 'Asian', 'American', 'Ukrainian')
 
 def validate_category(value):
     if not value in CATEGORIES:
